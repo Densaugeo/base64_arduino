@@ -17,7 +17,7 @@ int main() {
   unsigned int decoded_length = decode_base64(encoded_message, decoded);
   
   printf("[");
-  for(int i = 0; i < decoded_length - 1; ++i) {
+  for(unsigned int i = 0; i < decoded_length - 1; ++i) {
     printf("%d, ", decoded[i]);
   }
   printf("%d]\n", decoded[decoded_length - 1]);
