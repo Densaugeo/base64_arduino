@@ -15,8 +15,8 @@ unsigned int encode_base64_length(unsigned int input_length) {
   unsigned int output_length = input_length/3*4;
   
   switch(input_length % 3) {
-    case 1: output_length += 2;
-    case 2: output_length += 3;
+    case 1: output_length += 2; break;
+    case 2: output_length += 3; break;
   }
   
   return output_length;
