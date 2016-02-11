@@ -12,14 +12,7 @@ char base64_to_binary[256] = {
 };
 
 unsigned int encode_base64_length(unsigned int input_length) {
-  unsigned int output_length = input_length/3*4;
-  
-  switch(input_length % 3) {
-    case 1: output_length += 2; break;
-    case 2: output_length += 3; break;
-  }
-  
-  return output_length;
+  return (input_length + 2)/3*4;
 }
 
 unsigned int decode_base64_length(unsigned char *input) {
@@ -41,10 +34,10 @@ unsigned int decode_base64_length(unsigned char *input) {
 }
 
 unsigned int encode_base64(unsigned char *input, unsigned int input_length, unsigned char *output) {
-  unsigned int output_length = encode_base64_length(input_length);
+  unsigned int full_sets = input_length/3;
   
   // While there are still full sets of 24 bits...
-  for(unsigned int i = 3; i < output_length; i += 4) {
+  for(unsigned int i = 0; i < full_sets; ++i) {
     output[0] = binary_to_base64[                         input[0] >> 2];
     output[1] = binary_to_base64[(input[0] & 0x03) << 4 | input[1] >> 4];
     output[2] = binary_to_base64[(input[1] & 0x0F) << 2 | input[2] >> 6];
@@ -54,23 +47,27 @@ unsigned int encode_base64(unsigned char *input, unsigned int input_length, unsi
     output += 4;
   }
   
-  switch(output_length % 4) {
-    case 2:
+  switch(input_length % 3) {
+    case 0:
+      output[0] = '\0';
+      break;
+    case 1:
       output[0] = binary_to_base64[                         input[0] >> 2];
       output[1] = binary_to_base64[(input[0] & 0x03) << 4];
-      output[2] = '\0';
+      output[2] = '=';
+      output[3] = '=';
+      output[4] = '\0';
       break;
-    case 3:
+    case 2:
       output[0] = binary_to_base64[                         input[0] >> 2];
       output[1] = binary_to_base64[(input[0] & 0x03) << 4 | input[1] >> 4];
       output[2] = binary_to_base64[(input[1] & 0x0F) << 2];
-      output[3] = '\0';
+      output[3] = '=';
+      output[4] = '\0';
       break;
-    default:
-      output[0] = '\0';
   }
   
-  return output_length;
+  return encode_base64_length(input_length);
 }
 
 unsigned int decode_base64(unsigned char *input, unsigned char *output) {
