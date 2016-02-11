@@ -1,6 +1,6 @@
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
-#include "base64.h"
+#include "base64.hpp"
 
 TEST_CASE("encode_base64_length()", "[]") {
   SECTION("Zero length") {

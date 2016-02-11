@@ -1,8 +1,8 @@
 CXX ?= g++
 CFLAGS ?= -Wall
 
-test: catch.cpp catch.hpp base64.c base64.h
-	$(CXX) $(CFLAGS) catch.cpp base64.c -o catch
+test: catch.cpp catch.hpp base64.cpp base64.hpp
+	$(CXX) $(CFLAGS) catch.cpp base64.cpp -o catch
 	./catch
 
 clean:
