@@ -15,7 +15,7 @@ unsigned int encode_base64_length(unsigned int input_length) {
   return (input_length + 2)/3*4;
 }
 
-unsigned int decode_base64_length(unsigned char *input) {
+unsigned int decode_base64_length(unsigned char input[]) {
   unsigned char *start = input;
   
   while(base64_to_binary[input[0]] < 64) {
@@ -33,7 +33,7 @@ unsigned int decode_base64_length(unsigned char *input) {
   }
 }
 
-unsigned int encode_base64(unsigned char *input, unsigned int input_length, unsigned char *output) {
+unsigned int encode_base64(unsigned char input[], unsigned int input_length, unsigned char output[]) {
   unsigned int full_sets = input_length/3;
   
   // While there are still full sets of 24 bits...
@@ -70,7 +70,7 @@ unsigned int encode_base64(unsigned char *input, unsigned int input_length, unsi
   return encode_base64_length(input_length);
 }
 
-unsigned int decode_base64(unsigned char *input, unsigned char *output) {
+unsigned int decode_base64(unsigned char input[], unsigned char output[]) {
   unsigned int output_length = decode_base64_length(input);
   
   // While there are still full sets of 24 bits...

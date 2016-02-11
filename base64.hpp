@@ -29,7 +29,7 @@ unsigned int encode_base64_length(unsigned int input_length);
  *   Returns:
  *     Number of bytes of binary data in input
  */
-unsigned int decode_base64_length(unsigned char *input);
+unsigned int decode_base64_length(unsigned char input[]);
 
 /* encode_base64:
  *   Description:
@@ -41,7 +41,7 @@ unsigned int decode_base64_length(unsigned char *input);
  *   Returns:
  *     Length of encoded string in bytes (not including null terminator)
  */
-unsigned int encode_base64(unsigned char *input, unsigned int input_length, unsigned char *output);
+unsigned int encode_base64(unsigned char input[], unsigned int input_length, unsigned char output[]);
 
 /* decode_base64:
  *   Description:
@@ -52,6 +52,6 @@ unsigned int encode_base64(unsigned char *input, unsigned int input_length, unsi
  *   Returns:
  *     Number of bytes in the decoded binary
  */
-unsigned int decode_base64(unsigned char *input, unsigned char *output);
+unsigned int decode_base64(unsigned char input[], unsigned char output[]);
 
 #endif // ifndef
