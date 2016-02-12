@@ -35,7 +35,7 @@ printf("%d\n", binary_length); // Prints "6"
 
 ## Details
 
-Uses common web conventions - '+' for 62, '/' for 63, '=' for padding. Not that invalid base64 characters are interpreted as padding.
+Uses common web conventions - '+' for 62, '/' for 63, '=' for padding. Note that invalid base64 characters are interpreted as padding.
 
 Can be compiled as C, uses .*pp extensions because it is usually used in C++ projects and is tested for C++.
 
