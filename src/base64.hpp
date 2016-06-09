@@ -5,11 +5,26 @@
 #ifndef BASE64_H_INCLUDED
 #define BASE64_H_INCLUDED
 
-// Base64 characters, ordered by their 6-bit value
-extern const char binary_to_base64[65];
+/* binary_to_base64:
+ *   Description:
+ *     Converts a single byte from a binary value to the corresponding base64 character
+ *   Parameters:
+ *     v - Byte to convert
+ *   Returns:
+ *     ascii code of base64 character. If byte is >= 64, then there is not corresponding base64 character
+ *     and 255 is returned
+ */
+unsigned char binary_to_base64(unsigned char v);
 
-// 6-bit values of base64 characters, indexed by their ascii codes
-extern const char base64_to_binary[256];
+/* base64_to_binary:
+ *   Description:
+ *     Converts a single byte from a base64 character to the corresponding binary value
+ *   Parameters:
+ *     c - Base64 character (as ascii code)
+ *   Returns:
+ *     6-bit binary value
+ */
+unsigned char base64_to_binary(unsigned char v);
 
 /* encode_base64_length:
  *   Description:
