@@ -24,7 +24,7 @@ unsigned char binary_to_base64(unsigned char v);
  *   Returns:
  *     6-bit binary value
  */
-unsigned char base64_to_binary(unsigned char v);
+unsigned char base64_to_binary(unsigned char c);
 
 /* encode_base64_length:
  *   Description:
