@@ -435,31 +435,31 @@ TEST_CASE("decode_base64()", "[]") {
   
   SECTION("Non-base64 characcters are interpreted as padding") {
     unsigned char expected_binary_0[] = {3};
-    decode_base64((unsigned char*) "Aw==", actual_binary);
+    decode_base64((unsigned char*) "Aw:;", actual_binary);
     REQUIRE(memcmp(actual_binary, expected_binary_0, 1) == 0);
     
     unsigned char expected_binary_1[] = {3};
-    decode_base64((unsigned char*) "Aw===", actual_binary);
+    decode_base64((unsigned char*) "Aw`'@", actual_binary);
     REQUIRE(memcmp(actual_binary, expected_binary_1, 1) == 0);
     
     unsigned char expected_binary_2[] = {107, 248};
-    decode_base64((unsigned char*) "a/g=", actual_binary);
+    decode_base64((unsigned char*) "a/g~", actual_binary);
     REQUIRE(memcmp(actual_binary, expected_binary_2, 2) == 0);
     
     unsigned char expected_binary_3[] = {107, 248};
-    decode_base64((unsigned char*) "a/g==", actual_binary);
+    decode_base64((unsigned char*) "a/g[|", actual_binary);
     REQUIRE(memcmp(actual_binary, expected_binary_3, 2) == 0);
     
     unsigned char expected_binary_4[] = {226, 127, 31, 206, 19, 75, 35, 80};
-    decode_base64((unsigned char*) "4n8fzhNLI1A=", actual_binary);
+    decode_base64((unsigned char*) "4n8fzhNLI1A]", actual_binary);
     REQUIRE(memcmp(actual_binary, expected_binary_4, 8) == 0);
     
     unsigned char expected_binary_5[] = {99, 225, 39, 195, 8, 43, 209, 151, 8, 43, 195, 183};
-    decode_base64((unsigned char*) "Y+Enwwgr0ZcIK8O3==", actual_binary);
+    decode_base64((unsigned char*) "Y+Enwwgr0ZcIK8O3{}", actual_binary);
     REQUIRE(memcmp(actual_binary, expected_binary_5, 12) == 0);
     
     unsigned char expected_binary_6[] = {0};
-    decode_base64((unsigned char*) "AA==4n8fzhNL", actual_binary);
+    decode_base64((unsigned char*) "AA-^4n8fzhNL", actual_binary);
     REQUIRE(memcmp(actual_binary, expected_binary_6, 1) == 0);
   }
 }
