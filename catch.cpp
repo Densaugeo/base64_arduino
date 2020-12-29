@@ -306,7 +306,7 @@ TEST_CASE("decode_base64_length()", "[]") {
   }
 }
 
-TEST_CASE("decode_base64()", "[]") {
+TEST_CASE("decode_base64() - no length argument", "[]") {
   unsigned char actual_binary[100];
   
   // Zero length case ignored, because it is verified to return no data in decode_base64_length()
@@ -461,5 +461,190 @@ TEST_CASE("decode_base64()", "[]") {
     unsigned char expected_binary_6[] = {0};
     decode_base64((unsigned char*) "AA-^4n8fzhNL", actual_binary);
     REQUIRE(memcmp(actual_binary, expected_binary_6, 1) == 0);
+  }
+}
+
+// NOTE Except the final section ("Extra base64 chars are ignored"), this case is a duplicate of "decode_base64() - no length argument" with the length argument added
+TEST_CASE("decode_base64() - with length argument", "[]") {
+  unsigned char actual_binary[100];
+  
+  // Zero length case ignored, because it is verified to return no data in decode_base64_length()
+  
+  SECTION("Divisible by 4 (no padding)") {
+    unsigned char expected_binary_0[] = {0, 0, 0};
+    decode_base64((unsigned char*) "AAAA", 4, actual_binary);
+    REQUIRE(memcmp(actual_binary, expected_binary_0, 3) == 0);
+    
+    unsigned char expected_binary_1[] = {255, 255, 255};
+    decode_base64((unsigned char*) "////", 4, actual_binary);
+    REQUIRE(memcmp(actual_binary, expected_binary_1, 3) == 0);
+    
+    unsigned char expected_binary_2[] = {99, 225, 39, 195, 8, 43, 209, 151, 8, 43, 195, 183};
+    decode_base64((unsigned char*) "Y+Enwwgr0ZcIK8O3", 16, actual_binary);
+    REQUIRE(memcmp(actual_binary, expected_binary_2, 12) == 0);
+    
+    unsigned char expected_binary_3[] = {180, 179, 175, 132, 162, 219, 3, 18, 96, 162, 214, 232, 49, 120, 59, 133, 102, 93, 67, 34, 186, 28, 6, 28, 195, 69, 249, 44, 140, 115, 55, 215, 68, 99, 130, 160, 32, 181, 172, 125, 144, 8, 21, 119, 60, 213, 156, 230, 243, 87, 101, 167, 136, 94, 242, 174, 239, 81, 67, 101};
+    decode_base64((unsigned char*) "tLOvhKLbAxJgotboMXg7hWZdQyK6HAYcw0X5LIxzN9dEY4KgILWsfZAIFXc81Zzm81dlp4he8q7vUUNl", 80, actual_binary);
+    REQUIRE(memcmp(actual_binary, expected_binary_3, 60) == 0);
+  }
+  
+  SECTION("Not divisible by 4 (padded)") {
+    unsigned char expected_binary_0[] = {0};
+    decode_base64((unsigned char*) "AA==", 4, actual_binary);
+    REQUIRE(memcmp(actual_binary, expected_binary_0, 1) == 0);
+    
+    unsigned char expected_binary_1[] = {3};
+    decode_base64((unsigned char*) "Aw==", 4, actual_binary);
+    REQUIRE(memcmp(actual_binary, expected_binary_1, 1) == 0);
+    
+    unsigned char expected_binary_2[] = {107, 248};
+    decode_base64((unsigned char*) "a/g=", 4, actual_binary);
+    REQUIRE(memcmp(actual_binary, expected_binary_2, 2) == 0);
+    
+    unsigned char expected_binary_3[] = {255, 255};
+    decode_base64((unsigned char*) "//8=", 4, actual_binary);
+    REQUIRE(memcmp(actual_binary, expected_binary_3, 2) == 0);
+    
+    unsigned char expected_binary_4[] = {226, 127, 31, 206, 19, 75, 35, 80};
+    decode_base64((unsigned char*) "4n8fzhNLI1A=", 12, actual_binary);
+    REQUIRE(memcmp(actual_binary, expected_binary_4, 8) == 0);
+    
+    unsigned char expected_binary_5[] = {220, 92, 67, 95, 157, 76, 162, 210, 224, 202, 136, 157, 104, 178, 103, 81, 35, 103, 244, 71, 92, 25, 69, 64, 61, 232, 198, 108, 217, 106, 63, 103, 234, 39, 156, 108, 4, 101, 212, 198, 57, 223, 75, 132, 160, 26, 193, 139, 16, 89, 12, 45, 183, 133, 33};
+    decode_base64((unsigned char*) "3FxDX51MotLgyoidaLJnUSNn9EdcGUVAPejGbNlqP2fqJ5xsBGXUxjnfS4SgGsGLEFkMLbeFIQ==", 76, actual_binary);
+    REQUIRE(memcmp(actual_binary, expected_binary_5, 55) == 0);
+  }
+  
+  SECTION("Not divisible by 4 (padding missing)") {
+    unsigned char expected_binary_0[] = {0};
+    decode_base64((unsigned char*) "AA", 2, actual_binary);
+    REQUIRE(memcmp(actual_binary, expected_binary_0, 1) == 0);
+    
+    unsigned char expected_binary_1[] = {3};
+    decode_base64((unsigned char*) "Aw", 2, actual_binary);
+    REQUIRE(memcmp(actual_binary, expected_binary_1, 1) == 0);
+    
+    unsigned char expected_binary_2[] = {107, 248};
+    decode_base64((unsigned char*) "a/g", 3, actual_binary);
+    REQUIRE(memcmp(actual_binary, expected_binary_2, 2) == 0);
+    
+    unsigned char expected_binary_3[] = {255, 255};
+    decode_base64((unsigned char*) "//8", 3, actual_binary);
+    REQUIRE(memcmp(actual_binary, expected_binary_3, 2) == 0);
+    
+    unsigned char expected_binary_4[] = {226, 127, 31, 206, 19, 75, 35, 80};
+    decode_base64((unsigned char*) "4n8fzhNLI1A", 11, actual_binary);
+    REQUIRE(memcmp(actual_binary, expected_binary_4, 8) == 0);
+    
+    unsigned char expected_binary_5[] = {220, 92, 67, 95, 157, 76, 162, 210, 224, 202, 136, 157, 104, 178, 103, 81, 35, 103, 244, 71, 92, 25, 69, 64, 61, 232, 198, 108, 217, 106, 63, 103, 234, 39, 156, 108, 4, 101, 212, 198, 57, 223, 75, 132, 160, 26, 193, 139, 16, 89, 12, 45, 183, 133, 33};
+    decode_base64((unsigned char*) "3FxDX51MotLgyoidaLJnUSNn9EdcGUVAPejGbNlqP2fqJ5xsBGXUxjnfS4SgGsGLEFkMLbeFIQ", 74, actual_binary);
+    REQUIRE(memcmp(actual_binary, expected_binary_5, 55) == 0);
+  }
+  
+  SECTION("Padding in middle cuts off string") {
+    unsigned char expected_binary_0[] = {0};
+    decode_base64((unsigned char*) "AA==4n8fzhNL", 12, actual_binary);
+    REQUIRE(memcmp(actual_binary, expected_binary_0, 1) == 0);
+    
+    unsigned char expected_binary_1[] = {3};
+    decode_base64((unsigned char*) "Aw=4n8fzhNL", 11, actual_binary);
+    REQUIRE(memcmp(actual_binary, expected_binary_1, 1) == 0);
+    
+    unsigned char expected_binary_2[] = {107, 248};
+    decode_base64((unsigned char*) "a/g=4n8fzhNL==", 14, actual_binary);
+    REQUIRE(memcmp(actual_binary, expected_binary_2, 2) == 0);
+    
+    unsigned char expected_binary_3[] = {255, 255};
+    decode_base64((unsigned char*) "//8=4n8fzhNL", 12, actual_binary);
+    REQUIRE(memcmp(actual_binary, expected_binary_3, 2) == 0);
+    
+    unsigned char expected_binary_4[] = {226, 127, 31, 206, 19, 75, 35, 80};
+    decode_base64((unsigned char*) "4n8fzhNLI1A=4n8fzhNL====", 24, actual_binary);
+    REQUIRE(memcmp(actual_binary, expected_binary_4, 8) == 0);
+    
+    unsigned char expected_binary_5[] = {220, 92, 67, 95, 157, 76, 162, 210, 224, 202, 136, 157, 104, 178, 103, 81, 35, 103, 244, 71, 92, 25, 69, 64, 61, 232, 198, 108, 217, 106, 63, 103, 234, 39, 156, 108, 4, 101, 212, 198, 57, 223, 75, 132, 160, 26, 193, 139, 16, 89, 12, 45, 183, 133, 33};
+    decode_base64((unsigned char*) "3FxDX51MotLgyoidaLJnUSNn9EdcGUVAPejGbNlqP2fqJ5xsBGXUxjnfS4SgGsGLEFkMLbeFIQ==4n8fzhNL", 84, actual_binary);
+    REQUIRE(memcmp(actual_binary, expected_binary_5, 55) == 0);
+  }
+  
+  SECTION("Extra padding is ignored") {
+    unsigned char expected_binary_0[] = {3};
+    decode_base64((unsigned char*) "Aw========", 10, actual_binary);
+    REQUIRE(memcmp(actual_binary, expected_binary_0, 1) == 0);
+    
+    unsigned char expected_binary_1[] = {107, 248};
+    decode_base64((unsigned char*) "a/g=======", 10, actual_binary);
+    REQUIRE(memcmp(actual_binary, expected_binary_1, 2) == 0);
+    
+    unsigned char expected_binary_2[] = {3};
+    decode_base64((unsigned char*) "Aw========", 10, actual_binary);
+    REQUIRE(memcmp(actual_binary, expected_binary_2, 1) == 0);
+    
+    unsigned char expected_binary_3[] = {107, 248};
+    decode_base64((unsigned char*) "a/g==========", 13, actual_binary);
+    REQUIRE(memcmp(actual_binary, expected_binary_3, 2) == 0);
+    
+    unsigned char expected_binary_4[] = {226, 127, 31, 206, 19, 75, 35, 80};
+    decode_base64((unsigned char*) "4n8fzhNLI1A===========", 22, actual_binary);
+    REQUIRE(memcmp(actual_binary, expected_binary_4, 8) == 0);
+    
+    unsigned char expected_binary_5[] = {220, 92, 67, 95, 157, 76, 162, 210, 224, 202, 136, 157, 104, 178, 103, 81, 35, 103, 244, 71, 92, 25, 69, 64, 61, 232, 198, 108, 217, 106, 63, 103, 234, 39, 156, 108, 4, 101, 212, 198, 57, 223, 75, 132, 160, 26, 193, 139, 16, 89, 12, 45, 183, 133, 33};
+    decode_base64((unsigned char*) "3FxDX51MotLgyoidaLJnUSNn9EdcGUVAPejGbNlqP2fqJ5xsBGXUxjnfS4SgGsGLEFkMLbeFIQ=========", 83, actual_binary);
+    REQUIRE(memcmp(actual_binary, expected_binary_5, 55) == 0);
+  }
+  
+  SECTION("Non-base64 characcters are interpreted as padding") {
+    unsigned char expected_binary_0[] = {3};
+    decode_base64((unsigned char*) "Aw:;", 4, actual_binary);
+    REQUIRE(memcmp(actual_binary, expected_binary_0, 1) == 0);
+    
+    unsigned char expected_binary_1[] = {3};
+    decode_base64((unsigned char*) "Aw`'@", 5, actual_binary);
+    REQUIRE(memcmp(actual_binary, expected_binary_1, 1) == 0);
+    
+    unsigned char expected_binary_2[] = {107, 248};
+    decode_base64((unsigned char*) "a/g~", 4, actual_binary);
+    REQUIRE(memcmp(actual_binary, expected_binary_2, 2) == 0);
+    
+    unsigned char expected_binary_3[] = {107, 248};
+    decode_base64((unsigned char*) "a/g[|", 5, actual_binary);
+    REQUIRE(memcmp(actual_binary, expected_binary_3, 2) == 0);
+    
+    unsigned char expected_binary_4[] = {226, 127, 31, 206, 19, 75, 35, 80};
+    decode_base64((unsigned char*) "4n8fzhNLI1A]", 12, actual_binary);
+    REQUIRE(memcmp(actual_binary, expected_binary_4, 8) == 0);
+    
+    unsigned char expected_binary_5[] = {99, 225, 39, 195, 8, 43, 209, 151, 8, 43, 195, 183};
+    decode_base64((unsigned char*) "Y+Enwwgr0ZcIK8O3{}", 18, actual_binary);
+    REQUIRE(memcmp(actual_binary, expected_binary_5, 12) == 0);
+    
+    unsigned char expected_binary_6[] = {0};
+    decode_base64((unsigned char*) "AA-^4n8fzhNL", 12, actual_binary);
+    REQUIRE(memcmp(actual_binary, expected_binary_6, 1) == 0);
+  }
+  
+  SECTION("Extra base64 chars are ignored") {
+    unsigned char expected_binary_0[] = {3};
+    decode_base64((unsigned char*) "Awoejf8rjk", 2, actual_binary);
+    REQUIRE(memcmp(actual_binary, expected_binary_0, 1) == 0);
+    
+    unsigned char expected_binary_1[] = {107, 248};
+    decode_base64((unsigned char*) "a/gwoe5ygf", 3, actual_binary);
+    REQUIRE(memcmp(actual_binary, expected_binary_1, 2) == 0);
+    
+    unsigned char expected_binary_2[] = {3};
+    decode_base64((unsigned char*) "Awi87yg7y7", 2, actual_binary);
+    REQUIRE(memcmp(actual_binary, expected_binary_2, 1) == 0);
+    
+    unsigned char expected_binary_3[] = {107, 248};
+    decode_base64((unsigned char*) "a/gtj5r6ew3rg", 3, actual_binary);
+    REQUIRE(memcmp(actual_binary, expected_binary_3, 2) == 0);
+    
+    unsigned char expected_binary_4[] = {226, 127, 31, 206, 19, 75, 35, 80};
+    decode_base64((unsigned char*) "4n8fzhNLI1A5ed3wher56t", 11, actual_binary);
+    REQUIRE(memcmp(actual_binary, expected_binary_4, 8) == 0);
+    
+    unsigned char expected_binary_5[] = {220, 92, 67, 95, 157, 76, 162, 210, 224, 202, 136, 157, 104, 178, 103, 81, 35, 103, 244, 71, 92, 25, 69, 64, 61, 232, 198, 108, 217, 106, 63, 103, 234, 39, 156, 108, 4, 101, 212, 198, 57, 223, 75, 132, 160, 26, 193, 139, 16, 89, 12, 45, 183, 133, 33};
+    decode_base64((unsigned char*) "3FxDX51MotLgyoidaLJnUSNn9EdcGUVAPejGbNlqP2fqJ5xsBGXUxjnfS4SgGsGLEFkMLbeFIQuht4ew42q", 74, actual_binary);
+    REQUIRE(memcmp(actual_binary, expected_binary_5, 55) == 0);
   }
 }
