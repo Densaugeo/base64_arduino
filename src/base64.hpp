@@ -39,16 +39,15 @@ unsigned int encode_base64_length(unsigned int input_length);
 /* decode_base64_length:
  *   Description:
  *     Calculates number of bytes of binary data in a base64 string
- *     When given input_length, this function is (almost) an inverse of encode_base64_length()
- *     Variant that uses input no longer used within library, retained for API compatibility
+ *     Variant that does not use input_length no longer used within library, retained for API compatibility
  *   Parameters:
- *     input (optional) - Base64-encoded null-terminated string
- *     input_length (optional) - Amount of base64-encoded data in bytes
+ *     input - Base64-encoded null-terminated string
+ *     input_length (optional) - Number of bytes to read from input pointer
  *   Returns:
  *     Number of bytes of binary data in input
  */
 unsigned int decode_base64_length(unsigned char input[]);
-unsigned int decode_base64_length(unsigned int input_length);
+unsigned int decode_base64_length(unsigned char input[], unsigned int input_length);
 
 /* encode_base64:
  *   Description:
@@ -118,16 +117,17 @@ unsigned int encode_base64_length(unsigned int input_length) {
 }
 
 unsigned int decode_base64_length(unsigned char input[]) {
+  return decode_base64_length(input, -1);
+}
+
+unsigned int decode_base64_length(unsigned char input[], unsigned int input_length) {
   unsigned char *start = input;
   
-  while(base64_to_binary(input[0]) < 64) {
+  while(base64_to_binary(input[0]) < 64 && input - start < input_length) {
     ++input;
   }
   
-  return decode_base64_length(input - start);
-}
-
-unsigned int decode_base64_length(unsigned int input_length) {
+  input_length = input - start;
   return input_length/4*3 + (input_length % 4 ? input_length % 4 - 1 : 0);
 }
 
@@ -169,17 +169,11 @@ unsigned int encode_base64(unsigned char input[], unsigned int input_length, uns
 }
 
 unsigned int decode_base64(unsigned char input[], unsigned char output[]) {
-  unsigned char *end = input;
-  
-  while(base64_to_binary(end[0]) < 64) {
-    ++end;
-  }
-  
-  return decode_base64(input, end - input, output);
+  return decode_base64(input, -1, output);
 }
 
 unsigned int decode_base64(unsigned char input[], unsigned int input_length, unsigned char output[]) {
-  unsigned int output_length = decode_base64_length(input_length);
+  unsigned int output_length = decode_base64_length(input, input_length);
   
   // While there are still full sets of 24 bits...
   for(unsigned int i = 2; i < output_length; i += 3) {

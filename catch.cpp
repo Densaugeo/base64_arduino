@@ -247,7 +247,8 @@ TEST_CASE("encode_base64()", "[]") {
   }
 }
 
-TEST_CASE("decode_base64_length()", "[]") {
+// NOTE Except the final section ("Extra base64 chars are ignored"), this case is a duplicate of "decode_base64_length() - no length argument" with the length argument added
+TEST_CASE("decode_base64_length() - no input length argument", "[]") {
   SECTION("Zero length") {
     REQUIRE(decode_base64_length((unsigned char*) "") == 0);
   }
@@ -306,6 +307,74 @@ TEST_CASE("decode_base64_length()", "[]") {
   }
 }
 
+TEST_CASE("decode_base64_length() - with input length argument", "[]") {
+  SECTION("Zero length") {
+    REQUIRE(decode_base64_length((unsigned char*) "") == 0);
+  }
+  
+  SECTION("Divisible by 4 (no padding)") {
+    REQUIRE(decode_base64_length((unsigned char*) "AAAA", 4) == 3);
+    REQUIRE(decode_base64_length((unsigned char*) "////", 4) == 3);
+    REQUIRE(decode_base64_length((unsigned char*) "Y+Enwwgr0ZcIK8O3", 16) == 12);
+    REQUIRE(decode_base64_length((unsigned char*) "tLOvhKLbAxJgotboMXg7hWZdQyK6HAYcw0X5LIxzN9dEY4KgILWsfZAIFXc81Zzm81dlp4he8q7vUUNl") == 60);
+  }
+  
+  SECTION("Not divisible by 4 (padded)") {
+    REQUIRE(decode_base64_length((unsigned char*) "AA==", 4) == 1);
+    REQUIRE(decode_base64_length((unsigned char*) "Aw==", 4) == 1);
+    REQUIRE(decode_base64_length((unsigned char*) "a/g=", 4) == 2);
+    REQUIRE(decode_base64_length((unsigned char*) "//8=", 4) == 2);
+    REQUIRE(decode_base64_length((unsigned char*) "4n8fzhNLI1A=", 12) == 8);
+    REQUIRE(decode_base64_length((unsigned char*) "3FxDX51MotLgyoidaLJnUSNn9EdcGUVAPejGbNlqP2fqJ5xsBGXUxjnfS4SgGsGLEFkMLbeFIQ==", 76) == 55);
+  }
+  
+  SECTION("Not divisible by 4 (padding missing)") {
+    REQUIRE(decode_base64_length((unsigned char*) "AA", 2) == 1);
+    REQUIRE(decode_base64_length((unsigned char*) "Aw", 2) == 1);
+    REQUIRE(decode_base64_length((unsigned char*) "a/g", 3) == 2);
+    REQUIRE(decode_base64_length((unsigned char*) "//8", 3) == 2);
+    REQUIRE(decode_base64_length((unsigned char*) "4n8fzhNLI1A", 11) == 8);
+    REQUIRE(decode_base64_length((unsigned char*) "3FxDX51MotLgyoidaLJnUSNn9EdcGUVAPejGbNlqP2fqJ5xsBGXUxjnfS4SgGsGLEFkMLbeFIQ", 74) == 55);
+  }
+  
+  SECTION("Padding in middle cuts off string") {
+    REQUIRE(decode_base64_length((unsigned char*) "AA==4n8fzhNL", 12) == 1);
+    REQUIRE(decode_base64_length((unsigned char*) "Aw=4n8fzhNL", 11) == 1);
+    REQUIRE(decode_base64_length((unsigned char*) "a/g=4n8fzhNL==, 14") == 2);
+    REQUIRE(decode_base64_length((unsigned char*) "//8=4n8fzhNL", 12) == 2);
+    REQUIRE(decode_base64_length((unsigned char*) "4n8fzhNLI1A=4n8fzhNL====", 24) == 8);
+    REQUIRE(decode_base64_length((unsigned char*) "3FxDX51MotLgyoidaLJnUSNn9EdcGUVAPejGbNlqP2fqJ5xsBGXUxjnfS4SgGsGLEFkMLbeFIQ==4n8fzhNL", 84) == 55);
+  }
+  
+  SECTION("Extra padding is ignored") {
+    REQUIRE(decode_base64_length((unsigned char*) "Aw========", 10) == 1);
+    REQUIRE(decode_base64_length((unsigned char*) "a/g=======", 10) == 2);
+    REQUIRE(decode_base64_length((unsigned char*) "Aw========", 10) == 1);
+    REQUIRE(decode_base64_length((unsigned char*) "a/g==========", 13) == 2);
+    REQUIRE(decode_base64_length((unsigned char*) "4n8fzhNLI1A===========", 22) == 8);
+    REQUIRE(decode_base64_length((unsigned char*) "3FxDX51MotLgyoidaLJnUSNn9EdcGUVAPejGbNlqP2fqJ5xsBGXUxjnfS4SgGsGLEFkMLbeFIQ=========", 83) == 55);
+  }
+  
+  SECTION("Non-base64 characcters are interpreted as padding") {
+    REQUIRE(decode_base64_length((unsigned char*) "Aw:;", 4) == 1);
+    REQUIRE(decode_base64_length((unsigned char*) "Aw`'@", 5) == 1);
+    REQUIRE(decode_base64_length((unsigned char*) "a/g~", 4) == 2);
+    REQUIRE(decode_base64_length((unsigned char*) "a/g[|", 5) == 2);
+    REQUIRE(decode_base64_length((unsigned char*) "4n8fzhNLI1A]", 12) == 8);
+    REQUIRE(decode_base64_length((unsigned char*) "Y+Enwwgr0ZcIK8O3{}", 18) == 12);
+    REQUIRE(decode_base64_length((unsigned char*) "AA-^4n8fzhNL", 12) == 1);
+  }
+  
+  SECTION("Extra base64 chars are ignored") {
+    REQUIRE(decode_base64_length((unsigned char*) "Awoejf8rjk", 2) == 1);
+    REQUIRE(decode_base64_length((unsigned char*) "Awi87yg7y7", 2) == 1);
+    REQUIRE(decode_base64_length((unsigned char*) "a/gwoe5ygf", 3) == 2);
+    REQUIRE(decode_base64_length((unsigned char*) "a/gtj5r6ew3rg", 3) == 2);
+    REQUIRE(decode_base64_length((unsigned char*) "4n8fzhNLI1A5ed3wher56t", 11) == 8);
+    REQUIRE(decode_base64_length((unsigned char*) "3FxDX51MotLgyoidaLJnUSNn9EdcGUVAPejGbNlqP2fqJ5xsBGXUxjnfS4SgGsGLEFkMLbeFIQuht4ew42q", 74) == 55);
+  }
+}
+
 TEST_CASE("decode_base64() - no length argument", "[]") {
   unsigned char actual_binary[100];
   
@@ -333,6 +402,7 @@ TEST_CASE("decode_base64() - no length argument", "[]") {
     unsigned char expected_binary_0[] = {0};
     decode_base64((unsigned char*) "AA==", actual_binary);
     REQUIRE(memcmp(actual_binary, expected_binary_0, 1) == 0);
+    REQUIRE(decode_base64((unsigned char*) "AA==", actual_binary) == 1);
     
     unsigned char expected_binary_1[] = {3};
     decode_base64((unsigned char*) "Aw==", actual_binary);
