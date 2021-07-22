@@ -3,7 +3,7 @@
 Base64 encoder/decoder for arduino repo
 
 [![npm](https://img.shields.io/npm/l/express.svg)]()
-[![Build Status](https://travis-ci.org/Densaugeo/base64_arduino.svg?branch=master)](https://travis-ci.org/Densaugeo/base64_arduino)
+[![Build Status](https://travis-ci.com/Densaugeo/base64_arduino.svg?branch=master)](https://travis-ci.com/github/Densaugeo/base64_arduino)
 
 ## Installation
 
