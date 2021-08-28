@@ -47,7 +47,7 @@ printf("%d\n", base64_length); // Prints "20"
 printf((char *) base64); // Prints "U3RyaW5nIGV4YW1wbGU="
 ~~~
 
-base64 to string example:
+Base64 to string example:
 ~~~
 unsigned char base64[] = "U3RyaW5nIGV4YW1wbGU=";
 unsigned char string[15]; // 14 bytes for output + 1 for null terminator
