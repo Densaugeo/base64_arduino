@@ -11,9 +11,10 @@ Add base64.cpp and base64.hpp to your project folder or library search path, put
 
 ## Usage
 
+Binary to base64 example:
 ~~~
 unsigned char binary[] = {133, 244, 117, 206, 178, 195};
-unsigned char base64[9];
+unsigned char base64[9]; // 8 bytes for output + 1 for null terminator
 
 unsigned int base64_length = encode_base64(binary, 6, base64);
 
@@ -21,16 +22,42 @@ printf("%d\n", base64_length); // Prints "8"
 printf((char *) base64); // Prints "hfR1zrLD"
 ~~~
 
+Base64 to binary example:
 ~~~
 unsigned char base64[] = "hfR1zrLD";
 unsigned char binary[6];
 
 unsigned int binary_length = decode_base64(base64, binary);
 
+printf("%d\n", binary_length); // Prints "6"
 printf("[%d, %d, %d, %d, %d, %d]\n", // Prints "[133, 244, 117, 206, 178, 195]"
        binary[0], binary[1], binary[2],
        binary[3], binary[4], binary[5]);
-printf("%d\n", binary_length); // Prints "6"
+~~~
+
+String to base64 example:
+~~~
+unsigned char string[] = "String example";
+unsigned char base64[21]; // 20 bytes for output + 1 for null terminator
+
+// encode_base64() places a null terminator automatically, because the output is a string
+unsigned int base64_length = encode_base64(string, strlen((char *) string), base64);
+
+printf("%d\n", base64_length); // Prints "20"
+printf((char *) base64); // Prints "U3RyaW5nIGV4YW1wbGU="
+~~~
+
+base64 to string example:
+~~~
+unsigned char base64[] = "U3RyaW5nIGV4YW1wbGU=";
+unsigned char string[15]; // 14 bytes for output + 1 for null terminator
+
+// decode_base64() does not place a null terminator, because the output is not always a string
+unsigned int string_length = decode_base64(base64, string);
+string[string_length] = '\0';
+
+printf("%d\n", string_length); // Prints "14"
+printf((char *) string); // Prints "String example"
 ~~~
 
 ## Details

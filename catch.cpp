@@ -718,3 +718,60 @@ TEST_CASE("decode_base64() - with length argument", "[]") {
     REQUIRE(memcmp(actual_binary, expected_binary_5, 55) == 0);
   }
 }
+
+TEST_CASE("Examples used in readme", "[]") {
+  char output[100];
+  
+  SECTION("Binary to base64 example") {
+    unsigned char binary[] = {133, 244, 117, 206, 178, 195};
+    unsigned char base64[9]; // 8 bytes for output + 1 for null terminator
+    
+    unsigned int base64_length = encode_base64(binary, 6, base64);
+    
+    sprintf(output, "%d\n", base64_length); // Prints "8"
+    REQUIRE(memcmp(output, "8\n", strlen(output) + 1) == 0);
+    sprintf(output, (char *) base64); // Prints "hfR1zrLD"
+    REQUIRE(memcmp(output, "hfR1zrLD", strlen(output) + 1) == 0);
+  }
+  
+  SECTION("Base64 to binary example") {
+    unsigned char base64[] = "hfR1zrLD";
+    unsigned char binary[6];
+    
+    unsigned int binary_length = decode_base64(base64, binary);
+    
+    sprintf(output, "%d\n", binary_length); // Prints "6"
+    REQUIRE(memcmp(output, "6\n", strlen(output) + 1) == 0);
+    sprintf(output, "[%d, %d, %d, %d, %d, %d]", // Prints "[133, 244, 117, 206, 178, 195]"
+    binary[0], binary[1], binary[2],
+    binary[3], binary[4], binary[5]);
+    REQUIRE(memcmp(output, "[133, 244, 117, 206, 178, 195]", strlen(output) + 1) == 0);
+  }
+  
+  SECTION("String to base64 example") {
+    unsigned char string[] = "String example";
+    unsigned char base64[21]; // 20 bytes for output + 1 for null terminator
+    
+    // encode_base64() places a null terminator automatically, because the output is a string
+    unsigned int base64_length = encode_base64(string, strlen((char *) string), base64);
+    
+    sprintf(output, "%d\n", base64_length); // Prints "20"
+    REQUIRE(memcmp(output, "20\n", strlen(output) + 1) == 0);
+    sprintf(output, (char *) base64); // Prints "U3RyaW5nIGV4YW1wbGU="
+    REQUIRE(memcmp(output, "U3RyaW5nIGV4YW1wbGU=", strlen(output) + 1) == 0);
+  }
+  
+  SECTION("Base64 to string example") {
+    unsigned char base64[] = "U3RyaW5nIGV4YW1wbGU=";
+    unsigned char string[15]; // 14 bytes for output + 1 for null terminator
+    
+    // decode_base64() does not place a null terminator, because the output is not always a string
+    unsigned int string_length = decode_base64(base64, string);
+    string[string_length] = '\0';
+    
+    sprintf(output, "%d\n", string_length); // Prints "14"
+    REQUIRE(memcmp(output, "14\n", strlen(output) + 1) == 0);
+    sprintf(output, (char *) string); // Prints "String example"
+    REQUIRE(memcmp(output, "String example", strlen(output) + 1) == 0);
+  }
+}
