@@ -123,11 +123,11 @@ unsigned int decode_base64_length(unsigned char input[]) {
 unsigned int decode_base64_length(unsigned char input[], unsigned int input_length) {
   unsigned char *start = input;
   
-  while(base64_to_binary(input[0]) < 64 && input - start < input_length) {
+  while(base64_to_binary(input[0]) < 64 && (unsigned int) (input - start) < input_length) {
     ++input;
   }
   
-  input_length = input - start;
+  input_length = (unsigned int) (input - start);
   return input_length/4*3 + (input_length % 4 ? input_length % 4 - 1 : 0);
 }
 
