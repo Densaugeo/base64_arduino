@@ -9,7 +9,11 @@ Base64 encoder/decoder for arduino repo
 
 Add base64.cpp and base64.hpp to your project folder or library search path, put `#include "base64.hpp"` in your source, and pass base64.cpp to your compiler
 
-## Usage
+## Usage (Arduino)
+
+There is an example Arduino sketch in the `arduino-test` folder.
+
+## Usage (libc)
 
 Binary to base64 example:
 ~~~C++
