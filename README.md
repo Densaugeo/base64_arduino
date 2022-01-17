@@ -12,7 +12,7 @@ Add base64.cpp and base64.hpp to your project folder or library search path, put
 ## Usage
 
 Binary to base64 example:
-~~~
+~~~C++
 unsigned char binary[] = {133, 244, 117, 206, 178, 195};
 unsigned char base64[9]; // 8 bytes for output + 1 for null terminator
 
@@ -23,7 +23,7 @@ printf((char *) base64); // Prints "hfR1zrLD"
 ~~~
 
 Base64 to binary example:
-~~~
+~~~C++
 unsigned char base64[] = "hfR1zrLD";
 unsigned char binary[6];
 
@@ -36,7 +36,7 @@ printf("[%d, %d, %d, %d, %d, %d]\n", // Prints "[133, 244, 117, 206, 178, 195]"
 ~~~
 
 String to base64 example:
-~~~
+~~~C++
 unsigned char string[] = "String example";
 unsigned char base64[21]; // 20 bytes for output + 1 for null terminator
 
@@ -48,7 +48,7 @@ printf((char *) base64); // Prints "U3RyaW5nIGV4YW1wbGU="
 ~~~
 
 Base64 to string example:
-~~~
+~~~C++
 unsigned char base64[] = "U3RyaW5nIGV4YW1wbGU=";
 unsigned char string[15]; // 14 bytes for output + 1 for null terminator
 
