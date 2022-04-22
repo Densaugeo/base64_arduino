@@ -21,5 +21,3 @@ Changes made:
    that is important to allow the user to pass a literal string to the function.
 
 7. using default parameters value in functions when possible.
-
-8. returning and error if during a decoding of base64 a char is bigger then 64
