@@ -1,0 +1,23 @@
+{
+  "name": "base64",
+  "version": "1.2.2",
+  "authors": [
+    {
+      "name": "Densaugeo",
+      "email": "<use@git.hub>",
+      "maintainer": true
+    },
+    {
+      "name": "Noè Murr",
+      "email": "<noe.murr@outlook.com>",
+      "maintainer": true
+    }
+  ],
+  "description": "Uses common web conventions - '+' for 62, '/' for 63, '=' for padding. Note that invalid base64 characters are interpreted as padding.",
+  "keywords": "Base64",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Densaugeo/base64_arduino"
+  },
+  "platforms": "*"
+}

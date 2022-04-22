@@ -1,0 +1,25 @@
+Changes made:
+
+1. using normal `char` instead of `unsigned char` for character of a base64 
+   encoded value. They are ascii characters and so they should be `char`.
+
+2. using `uint8_t` instead of `unsigend char` when dealing with bytes. It's 
+   better to use such kind of standards because they are guaranteed to be 8 bit.
+
+3. using `size_t` or `ssize_t`instead of `unsigned int` when dealing with 
+   lengths.It's better because it'll be the same used in string libraries when 
+   building across different architectures (e.g. Arduino).
+
+4. using doxygen standard tags in comments for documentation of the functions.
+
+5. divided implementations from declaration using a cpp file. This prevents the 
+   error of redefinition of functions if the library is used in different files
+   in a project. 
+   N.B. for one line functions I'm using the `inline` keyword 
+
+6. using `const char *` instead of `unsigend char[]` when dealing with strings.
+   that is important to allow the user to pass a literal string to the function.
+
+7. using default parameters value in functions when possible.
+
+8. returning and error if during a decoding of base64 a char is bigger then 64
