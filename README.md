@@ -66,7 +66,7 @@ printf((char *) string); // Prints "String example"
 
 ## Details
 
-Uses common web conventions - '+' for 62, '/' for 63, '=' for padding. Note that invalid base64 characters are interpreted as padding.
+By default, uses common web conventions - '+' for 62, '/' for 63, '=' for padding. Optionally, define the `BASE64_URL` macro to follow RFC 4648 §5 for filesystem/URL safe output ('-' for 62 and '_' for 63). Note that invalid base64 characters are interpreted as padding.
 
 Can be compiled as C, uses .*pp extensions because it is usually used in C++ projects and is tested for C++.
 

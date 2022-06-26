@@ -1,8 +1,10 @@
 CXX ?= g++
 CFLAGS ?= -Wall -I src
 
-test: catch.cpp catch.hpp src/base64.hpp
-	$(CXX) $(CFLAGS) catch.cpp -o catch
+test: catch-standard.cpp catch-base64-url.cpp catch.hpp src/base64.hpp
+	$(CXX) $(CFLAGS) catch-standard.cpp -o catch
+	./catch
+	$(CXX) $(CFLAGS) catch-base64-url.cpp -o catch
 	./catch
 
 upload:

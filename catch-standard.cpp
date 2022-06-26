@@ -1,3 +1,5 @@
+// Contains most unit tests (all unit tests for the standard configuration)
+
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
 #include "base64.hpp"

@@ -84,17 +84,19 @@ unsigned char binary_to_base64(unsigned char v) {
   // Digits - '0' is ascii 48 and base64 52
   if(v < 62) return v - 4;
   
-  // '+' is ascii 43 and base64 62
   #ifdef BASE64_URL
+  // '-' is ascii 45 and base64 62
   if(v == 62) return '-';
   #else
+  // '+' is ascii 43 and base64 62
   if(v == 62) return '+';
   #endif
 
-  // '/' is ascii 47 and base64 63
   #ifdef BASE64_URL
+  // '_' is ascii 95 and base64 62
   if(v == 63) return '_';
   #else
+  // '/' is ascii 47 and base64 63
   if(v == 63) return '/';
   #endif
   
@@ -111,17 +113,19 @@ unsigned char base64_to_binary(unsigned char c) {
   // Digits - '0' is ascii 48 and base64 52
   if('0' <= c && c <= '9') return c + 4;
   
-  // '+' is ascii 43 and base64 62
   #ifdef BASE64_URL
+  // '-' is ascii 45 and base64 62
   if(c == '-') return 62;
   #else
+  // '+' is ascii 43 and base64 62
   if(c == '+') return 62;
   #endif
   
-  // '/' is ascii 47 and base64 63
   #ifdef BASE64_URL
+  // '_' is ascii 95 and base64 62
   if(c == '_') return 63;
   #else
+  // '/' is ascii 47 and base64 63
   if(c == '/') return 63;
   #endif
   
